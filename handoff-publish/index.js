@@ -32,7 +32,7 @@ let setup = (bot, app, isAgent, options) => {
     else {
         _mongodbProvider = options.mongodbProvider || process.env.MONGODB_PROVIDER;
         mongooseProvider = new mongoose_provider_1.MongooseProvider();
-        mongoose_provider_1.mongoose.connect(_mongodbProvider);
+        mongoose_provider_1.mongoose.createConnection(_mongodbProvider);
     }
     if (!options.directlineSecret && !process.env.MICROSOFT_DIRECTLINE_SECRET) {
         throw new Error('Bot-Handoff: Microsoft Bot Builder Direct Line Secret was not provided in setup options (directlineSecret) or in the environment variables (MICROSOFT_DIRECTLINE_SECRET)');
