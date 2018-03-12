@@ -7,6 +7,10 @@
         "sourceMap": true
     },
     "files": [
-        "src/*.ts"
+        "src/index.ts",
+        "src/commands.ts",
+        "src/handoff.ts",
+        "src/mongoose-provider.ts"
+        
     ]
 }
