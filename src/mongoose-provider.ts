@@ -84,7 +84,7 @@ export class MongooseProvider implements Provider {
         let conversation: Conversation = await this.getConversation(by);
 
         if (!conversation) return false;
-        conversation.customer.user = message.user;
+        if(message.user) conversation.customer.user = message.user;
          
         if (from == "Customer") {
             if (indexExports._textAnalyticsKey) { sentimentScore = await this.collectSentiment(text); }
