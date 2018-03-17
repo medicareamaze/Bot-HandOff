@@ -190,8 +190,7 @@ export class MongooseProvider implements Provider {
             }
             return conversation;
         } else if (by.bestChoice){
-            const waitingLongest = await this.getCurrentConversations();
-            waitingLongest
+            const waitingLongest = (await this.getCurrentConversations())
                 .filter(conversation => conversation.state === ConversationState.Waiting)
                 .sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
             return waitingLongest.length > 0 && waitingLongest[0];
