@@ -125,20 +125,22 @@ async function currentConversations(handoff: Handoff): Promise<string> {
     let text = '### Current Conversations \n';
     text += "Please use the user's ID to connect with them.\n\n";
     conversations.forEach(conversation => {
-        const starterText = ` - *${conversation.customer.user.name} (ID: ${conversation.customer.user.id})*`;
-        switch (ConversationState[conversation.state]) {
-            case 'Bot':
-                text += starterText + ' is talking to the bot\n';
-                break;
-            case 'Agent':
-                text += starterText + ' is talking to an agent\n';
-                break;
-            case 'Waiting':
-                text += starterText + ' is waiting to talk to an agent\n';
-                break;
-        }
+         if (conversation.customer.user.name !== undefined) {
+            const starterText = ` - *${conversation.customer.user.name} (ID: ${conversation.customer.user.id})*`;
+            switch (ConversationState[conversation.state]) {
+                case 'Bot':
+                    text += starterText + ' is talking to the bot\n';
+                    break;
+                case 'Agent':
+                    text += starterText + ' is talking to an agent\n';
+                    break;
+                case 'Waiting':
+                    text += starterText + ' is waiting to talk to an agent\n';
+                    break;
+            }
+         }
     });
-
+    if(text=='### Current Conversations \nPlease use the user's ID to connect with them.\n\n') text = "No customers are in conversation." 
     return text;
 }
 
