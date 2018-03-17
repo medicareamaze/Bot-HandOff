@@ -25,7 +25,7 @@ let setup = (bot, app, isAgent, options) => {
     } else {
         _mongodbProvider = options.mongodbProvider || process.env.MONGODB_PROVIDER;
         mongooseProvider = new MongooseProvider();
-       // mongoose.connect(_mongodbProvider);
+        mongoose.connect(_mongodbProvider);
     }
 
     if (!options.directlineSecret && !process.env.MICROSOFT_DIRECTLINE_SECRET) {
