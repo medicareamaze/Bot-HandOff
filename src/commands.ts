@@ -96,7 +96,7 @@ async function agentCommand(
 
 async function customerCommand(session: builder.Session, next: Function, handoff: Handoff) {
     const message = session.message;
-    handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address).customer.user = message.user;
+    //handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address).customer.user = message.user;
    
     const customerStartHandoffCommandRegex = new RegExp("^" + indexExports._customerStartHandoffCommand + "$", "gi");
     if (customerStartHandoffCommandRegex.test(message.text)) {
