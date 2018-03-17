@@ -96,11 +96,13 @@ async function agentCommand(
 
 async function customerCommand(session: builder.Session, next: Function, handoff: Handoff) {
     const message = session.message;
-    (await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address)).customer.user = message.user;   
+    let conversation = await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
+        
+    conversation.customer.user = message.user;   
     const customerStartHandoffCommandRegex = new RegExp("^" + indexExports._customerStartHandoffCommand + "$", "gi");
     if (customerStartHandoffCommandRegex.test(message.text)) {
         // lookup the conversation (create it if one doesn't already exist)
-        const conversation = await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
+        //const conversation = await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
         if (conversation.state == ConversationState.Bot) {
             await handoff.addToTranscript({ customerConversationId: conversation.customer.conversation.id }, message);
             await handoff.queueCustomerForAgent({ customerConversationId: conversation.customer.conversation.id });
