@@ -127,7 +127,7 @@ async function currentConversations(handoff: Handoff): Promise<string> {
     var flag = false;
     conversations.forEach(conversation => {
          if (conversation.customer.user && conversation.customer.user.name ) {
-             falg=true;
+             flag=true;
             const starterText = ` - *${conversation.customer.user.name} (ID: ${conversation.customer.user.id})*`;
             switch (ConversationState[conversation.state]) {
                 case 'Bot':
