@@ -140,7 +140,7 @@ async function currentConversations(handoff: Handoff): Promise<string> {
             }
          }
     });
-    if(text=='### Current Conversations \nPlease use the user's ID to connect with them.\n\n') text = "No customers are in conversation." 
+    if(text=='### Current Conversations \nPlease use the users ID to connect with them.\n\n') text = "No customers are in conversation." 
     return text;
 }
 
