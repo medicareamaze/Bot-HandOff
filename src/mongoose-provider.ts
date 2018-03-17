@@ -81,10 +81,11 @@ export class MongooseProvider implements Provider {
         let sentimentScore = -1;
         let text = message.text;
         let datetime = new Date().toISOString();
-        const conversation: Conversation = await this.getConversation(by);
+        let conversation: Conversation = await this.getConversation(by);
 
         if (!conversation) return false;
-
+        if(conversation.customer.user.name==undefined) conversation.customer.user = message.user;
+         
         if (from == "Customer") {
             if (indexExports._textAnalyticsKey) { sentimentScore = await this.collectSentiment(text); }
             datetime = message.localTimestamp ? message.localTimestamp : message.timestamp
