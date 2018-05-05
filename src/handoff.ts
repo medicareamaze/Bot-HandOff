@@ -17,6 +17,7 @@ export interface TranscriptLine {
     sentimentScore?: number,
     state?: number,
     attachments: string,
+    adaptiveResponseKVPairs: string,  
     text: string
 }
 
@@ -158,6 +159,15 @@ export class Handoff {
                     });
                      session.send(msg);
                  }
+                 if(!!transcriptLine.adaptiveResponseKVPairs){
+                    var kvpairs= JSON.parse(transcriptLine.adaptiveResponseKVPairs);
+                    var response = "Response: ";
+                    for (var prop in kvpairs) {
+                        response += prop + ': [' + kvpairs[prop] + ']; '; 
+                    }
+                    session.send(response);
+                } 
+
                 }
             );
         } else {
