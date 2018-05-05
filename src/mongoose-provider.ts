@@ -44,7 +44,7 @@ export const TranscriptLineSchema = new mongoose.Schema({
     sentimentScore: Number,
     state: Number,
     attachments: String,
-    adaptiveResponseKVPairs: string,
+    adaptiveResponseKVPairs: String,
     text: String
 });
 
