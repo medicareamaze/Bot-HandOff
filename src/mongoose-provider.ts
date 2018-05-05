@@ -43,6 +43,7 @@ export const TranscriptLineSchema = new mongoose.Schema({
     from: String,
     sentimentScore: Number,
     state: Number,
+    attachments: String,
     text: String
 });
 
@@ -80,6 +81,8 @@ export class MongooseProvider implements Provider {
     async addToTranscript(by: By, message: builder.IMessage, from: string): Promise<boolean> {
         let sentimentScore = -1;
         let text = message.text;
+        if(!message.text &&  !!message.value) text = message.value;
+        let attachments = JSON.stringify(message.attachments);
         let datetime = new Date().toISOString();
         let conversation: Conversation = await this.getConversation(by);
 
@@ -96,6 +99,7 @@ export class MongooseProvider implements Provider {
             from: from,
             sentimentScore: sentimentScore,
             state: conversation.state,
+            attachments: attachments,
             text
         });
 

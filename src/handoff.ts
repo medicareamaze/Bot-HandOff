@@ -16,6 +16,7 @@ export interface TranscriptLine {
     from: string,
     sentimentScore?: number,
     state?: number,
+    attachments: string,
     text: string
 }
 
@@ -143,7 +144,22 @@ export class Handoff {
         const customerConversation = await this.getConversation(by);
         if (customerConversation) {
             customerConversation.transcript.forEach(transcriptLine =>
-                session.send(transcriptLine.text));
+                {
+                 if(!!transcriptLine.text) session.send(transcriptLine.text);
+                 if(!!transcriptLine.attachments){
+                  var msg = new builder.Message(session);
+                   // msg.attachmentLayout = node.data.attachmentLayout;
+                   var attachments= JSON.parse(transcriptLine.attachments);
+                   attachments.forEach(function (attachment) {
+                        msg.addAttachment({
+                            contentType: "application/vnd.microsoft.card.adaptive",
+                            content: attachment.content
+                        });
+                    });
+                     session.send(msg);
+                 }
+                }
+            );
         } else {
             session.send('No Transcript to show. Try entering a username or try again when connected to a customer');
         }
