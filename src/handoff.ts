@@ -130,7 +130,7 @@ export class Handoff {
                     console.log("No agent address present while customer in state Agent");
                     return;
                 }
-                this.bot.send(new builder.Message().address(conversation.agent).text(message.text));
+                this.bot.send(new builder.Message().address(conversation.agent).text(message.text).addEntity({ "customer": true }));
                 return;
         }
     }
