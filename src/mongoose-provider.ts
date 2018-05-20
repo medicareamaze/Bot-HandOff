@@ -340,7 +340,7 @@ export class MongooseProvider implements Provider {
 
     private async updateLead(lead: Lead,conv:Conversation): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            if (!lead.lastConversationsByChannel){
+            if (!lead.lastConversationsByChannel || lead.lastConversationsByChannel.length<=0){
                 lead.lastConversationsByChannel= [conv];
             }else{
               let convs= lead.lastConversationsByChannel.filter(conversation => conversation.customer.channelId === conv.customer.channelId && conversation.customer.bot.name === conv.customer.bot.name);
