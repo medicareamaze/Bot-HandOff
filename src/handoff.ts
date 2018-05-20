@@ -116,7 +116,7 @@ export class Handoff {
         const message = session.message;
         const conversation = await this.getConversation({ agentConversationId: message.address.conversation.id }, message.address);
         await this.addToTranscript({ agentConversationId: message.address.conversation.id }, message);
-        await this.updateLead({ customerId: message.address.user.id}, message);
+       
        
         // if the agent is not in conversation, no further routing is necessary
         if (!conversation)
@@ -138,7 +138,7 @@ export class Handoff {
         // method will either return existing conversation or a newly created conversation if this is first time we've heard from customer
         const conversation = await this.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
         await this.addToTranscript({ customerConversationId: conversation.customer.conversation.id }, message);
-
+        await this.updateLead({ customerId: message.address.user.id}, message);
         switch (conversation.state) {
             case ConversationState.Bot:
                 return next();
