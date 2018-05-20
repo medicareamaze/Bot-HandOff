@@ -37,6 +37,25 @@ export interface By {
     customerName?: string,
     customerId?: string
 }
+// What is stored in a Lead. Agent only included if customer is talking to an agent
+export interface Lead {
+    id: string,
+    name: string,
+    email:string,
+    mobileNumber:string,
+    landLine:string,
+    zip:string,
+    dateOfBirth:Date,
+    eligibleProductTypes: string[],
+    interestedProductTypes: string[],
+    offeredProducts:string[],
+    interestedProducts:string[],
+    webPushSubscription:String[],
+    androidPushSubscription:String[],
+    iosPushSubscription:String[],
+    isAgent:boolean,    
+    lastConversationsByChannel: Conversation[]
+};
 
 export interface Provider {
     init();
@@ -198,5 +217,11 @@ export class Handoff {
 
     public getCurrentConversations = async (): Promise<Conversation[]> => {
         return await this.provider.getCurrentConversations();
+    }
+
+    public updateLead = async (by: By, message: builder.IMessage): Promise<boolean> => {   
+        let from = by.agentConversationId ? 'Agent' : 'Customer'; 
+        return  this.provider.updateLead(by,message,from) ;   
+        
     }
 };

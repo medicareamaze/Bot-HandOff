@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import mongoose = require('mongoose');
 mongoose.Promise = bluebird;
 
-import { By, Conversation, Provider, ConversationState } from './handoff';
+import { By, Conversation, Provider, ConversationState,Lead } from './handoff';
 
 const indexExports = require('./index');
 
@@ -67,11 +67,37 @@ export const BySchema = new mongoose.Schema({
     agentConversationId: String,
     customerConversationId: String,
     customerName: String,
-    customerId: String,
+    customerId: String
 });
 export interface ByDocument extends By, mongoose.Document { }
 export const ByModel = mongoose.model<ByDocument>('By', BySchema);
+
+
+export const LeadSchema = new mongoose.Schema({
+    id: String,
+    name: String,
+    email:String,
+    mobileNumber:String,
+    landLine:String,
+    zip:String,
+    dateOfBirth:Date,
+    eligibleProductTypes: [String],
+    interestedProductTypes: [String],
+    offeredProducts:[String],
+    interestedProducts:[String],
+    webPushSubscription:[String],
+    androidPushSubscription:[String],
+    iosPushSubscription:[String],
+    isAgent:Boolean,    
+    lastConversationsByChannel: [ConversationSchema]
+});
+
+export interface LeadDocument extends Lead, mongoose.Document { }
+export const LeadModel = mongoose.model<LeadDocument>('Lead', LeadSchema);
+
 export { mongoose };
+
+
 
 // -----------------
 // Mongoose Provider
@@ -126,6 +152,74 @@ export class MongooseProvider implements Provider {
 
         return await this.updateConversation(conversation);
     }
+    async updateLeadConversation(by: By, message: builder.IMessage, from: string): Promise<boolean> {
+        let sentimentScore = -1;
+        let text = message.text;        
+        let adaptiveResponseKVPairs = !!message.value? JSON.stringify(message.value):null;
+        let attachments = JSON.stringify(message.attachments);
+        let datetime = new Date().toISOString();
+        
+       //find the latest converation by customer id, channel, bot
+        const conversations = await ConversationModel.find({ 'customer.user.id': by.customerId })
+            .filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name )               
+            .sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
+        
+        let conversation = conversations.length>0 && conversations[conversations.length-1] ;
+
+               
+        if (!conversation) return false;
+        //Check if Lead exists - if not create
+        let  lead = await LeadModel.findOne({ 'id': by.customerId });
+        if(!lead){
+        //create lead and add converation 
+        }
+        else{
+          //check if converation exists for the channel
+
+          //if not exists add converation
+
+          //if exists add converation
+        }
+
+      
+         
+        if (from == "Customer") {
+            if (indexExports._textAnalyticsKey) { sentimentScore = await this.collectSentiment(text); }
+            datetime = message.localTimestamp ? message.localTimestamp : message.timestamp
+        }
+
+        conversation.transcript.push({
+            timestamp: datetime,
+            from: from,
+            sentimentScore: sentimentScore,
+            state: conversation.state,
+            attachments: attachments,
+            adaptiveResponseKVPairs:adaptiveResponseKVPairs,
+            text
+        });
+
+        if (indexExports._appInsights) {   
+            // You can't log embedded json objects in application insights, so we are flattening the object to one item.
+            // Also, have to stringify the object so functions from mongodb don't get logged 
+            let latestTranscriptItem = conversation.transcript.length-1;
+            let x = JSON.parse(JSON.stringify(conversation.transcript[latestTranscriptItem]));
+            x['botId'] = conversation.customer.bot.id;
+            x['customerId'] = conversation.customer.user.id;
+            x['customerName'] = conversation.customer.user.name;
+            x['customerChannelId'] = conversation.customer.channelId;
+            x['customerConversationId'] = conversation.customer.conversation.id;
+            if (conversation.agent) {
+                x['agentId'] = conversation.agent.user.id;
+                x['agentName'] = conversation.agent.user.name;
+                x['agentChannelId'] = conversation.agent.channelId;
+                x['agentConversationId'] = conversation.agent.conversation.id;
+            }
+            indexExports._appInsights.client.trackEvent("Transcript", x);    
+        }
+
+        return await this.updateConversation(conversation);
+    }
+
 
     async connectCustomerToAgent(by: By, agentAddress: builder.IAddress): Promise<Conversation> {
         const conversation: Conversation = await this.getConversation(by);
@@ -185,7 +279,7 @@ export class MongooseProvider implements Provider {
         } else if (by.customerId) {
             const conversation = await ConversationModel.findOne({ 'customer.user.id': by.customerId });
             return conversation;
-        } else if (by.agentConversationId) {
+        }  else if (by.agentConversationId) {
             const conversation = await ConversationModel.findOne({ 'agent.conversation.id': by.agentConversationId });
             if (conversation) return conversation;
             else return null;
@@ -238,6 +332,48 @@ export class MongooseProvider implements Provider {
     private async deleteConversation(conversation: Conversation): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
             ConversationModel.findByIdAndRemove((conversation as any)._id).then((error) => {
+                resolve(true);
+            })
+        });
+    }
+
+    private async createLead(id:string, name,string): Promise<Lead> {
+        return await LeadModel.create({
+            id: id,
+            name: name           
+        });
+    }
+
+    private async updateLead(lead: Lead,conv:Conversation): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            if (!lead.lastConversationsByChannel){
+                lead.lastConversationsByChannel= [conv];
+            }else{
+              let convs= lead.lastConversationsByChannel.filter(conversation => conversation.customer.channelId === conv.customer.channelId && conversation.customer.bot.name === conv.customer.bot.name);
+              if(!convs || convs.length<=0){
+                  lead.lastConversationsByChannel.push(conv);
+              }
+              else {
+                  var index =  lead.lastConversationsByChannel.indexOf(convs[0]);
+                  if (index > -1) {
+                    lead.lastConversationsByChannel.splice(index, 1);
+                  }
+                  lead.lastConversationsByChannel.push(conv);
+              }
+            }
+            LeadModel.findByIdAndUpdate((lead as any).id, lead).then((error) => {
+                resolve(true)
+            }).catch((error) => {
+                console.log('Failed to update lead');
+                console.log(lead as any);
+                resolve(false);
+            });
+        });
+    }
+
+    private async deleteLead(lead: Lead): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            LeadModel.findByIdAndRemove((lead as any)._id).then((error) => {
                 resolve(true);
             })
         });
