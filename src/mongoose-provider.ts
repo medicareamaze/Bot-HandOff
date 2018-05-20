@@ -340,22 +340,22 @@ export class MongooseProvider implements Provider {
 
     private async updateLead(lead: Lead,conv:Conversation): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            // if (!lead.lastConversationsByChannel || lead.lastConversationsByChannel.length<=0){
-            //     lead.lastConversationsByChannel= [conv];
-            // }else{
-            //   let convs= lead.lastConversationsByChannel.filter(conversation => conversation.customer.channelId === conv.customer.channelId && conversation.customer.bot.name === conv.customer.bot.name);
-            //   if(!convs || convs.length<=0){
-            //       lead.lastConversationsByChannel.push(conv);
-            //   }
-            //   else {
-            //       var index =  lead.lastConversationsByChannel.indexOf(convs[0]);
-            //       if (index > -1) {
-            //         lead.lastConversationsByChannel.splice(index, 1);
-            //       }
-            //       lead.lastConversationsByChannel.push(conv);
-            //   }
-            // }
-            LeadModel.findByIdAndUpdate(lead.id, {$addToSet:{lastConversationsByChannel: conv}}).then((error) => {
+            if (!lead.lastConversationsByChannel || lead.lastConversationsByChannel.length<=0){
+                lead.lastConversationsByChannel= [conv];
+            }else{
+              let convs= lead.lastConversationsByChannel.filter(conversation => conversation.customer.channelId === conv.customer.channelId && conversation.customer.bot.name === conv.customer.bot.name);
+              if(!convs || convs.length<=0){
+                  lead.lastConversationsByChannel.push(conv);
+              }
+              else {
+                  var index =  lead.lastConversationsByChannel.indexOf(convs[0]);
+                  if (index > -1) {
+                    lead.lastConversationsByChannel.splice(index, 1);
+                  }
+                  lead.lastConversationsByChannel.push(conv);
+              }
+            }
+            LeadModel.findByIdAndUpdate((lead as any)._id, lead).then((error) => {
                 resolve(true)
             }).catch((error) => {
                 console.log('Failed to update lead');
