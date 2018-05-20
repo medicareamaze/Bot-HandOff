@@ -161,7 +161,7 @@ export class MongooseProvider implements Provider {
         
        //find the latest converation by customer id, channel, bot
         let  conversations = await ConversationModel.find({ 'customer.user.id': by.customerId });
-        conversations=    conversations.filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name );               
+        conversations=    conversations.filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name && conversation.transcript.length>0 );               
         conversations= conversations.sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
         
         let conversation = conversations.length>0 && conversations[conversations.length-1] ;
