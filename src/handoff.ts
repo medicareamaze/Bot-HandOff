@@ -116,7 +116,7 @@ export class Handoff {
         const message = session.message;
         const conversation = await this.getConversation({ agentConversationId: message.address.conversation.id }, message.address);
         await this.addToTranscript({ agentConversationId: message.address.conversation.id }, message);
-        await this.updateLead({ customerId: message.customer.user.id}, message);
+        await this.updateLead({ customerId: message.address.user.id}, message);
        
         // if the agent is not in conversation, no further routing is necessary
         if (!conversation)
@@ -223,7 +223,7 @@ export class Handoff {
 
     public updateLead = async (by: By, message: builder.IMessage): Promise<boolean> => {   
         let from = by.agentConversationId ? 'Agent' : 'Customer'; 
-        return  this.provider.updateLead(by,message,from) ;   
+        return  this.provider.updateLeadConversation(by,message,from) ;   
         
     }
 };
