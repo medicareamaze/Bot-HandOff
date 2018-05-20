@@ -160,9 +160,9 @@ export class MongooseProvider implements Provider {
         let datetime = new Date().toISOString();
         
        //find the latest converation by customer id, channel, bot
-        const conversations = await ConversationModel.find({ 'customer.user.id': by.customerId })
-            .filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name )               
-            .sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
+        let  conversations = await ConversationModel.find({ 'customer.user.id': by.customerId });
+        conversations=    conversations.filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name );               
+        conversations= conversations.sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
         
         let conversation = conversations.length>0 && conversations[conversations.length-1] ;
 
@@ -172,17 +172,11 @@ export class MongooseProvider implements Provider {
         let  lead = await LeadModel.findOne({ 'id': by.customerId });
         if(!lead){
         //create lead and add converation 
-        }
-        else{
-          //check if converation exists for the channel
-
-          //if not exists add converation
-
-          //if exists add converation
+        lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
         }
 
-      
-         
+        await this.updateLead(lead,conversation);
+
         if (from == "Customer") {
             if (indexExports._textAnalyticsKey) { sentimentScore = await this.collectSentiment(text); }
             datetime = message.localTimestamp ? message.localTimestamp : message.timestamp
@@ -337,7 +331,7 @@ export class MongooseProvider implements Provider {
         });
     }
 
-    private async createLead(id:string, name,string): Promise<Lead> {
+    private async createLead(id:string, name:string): Promise<Lead> {
         return await LeadModel.create({
             id: id,
             name: name           
