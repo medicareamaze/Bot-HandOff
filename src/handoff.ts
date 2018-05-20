@@ -116,6 +116,8 @@ export class Handoff {
         const message = session.message;
         const conversation = await this.getConversation({ agentConversationId: message.address.conversation.id }, message.address);
         await this.addToTranscript({ agentConversationId: message.address.conversation.id }, message);
+        await this.updateLead({ customerId: message.customer.user.id}, message);
+       
         // if the agent is not in conversation, no further routing is necessary
         if (!conversation)
             return;
