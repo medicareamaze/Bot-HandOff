@@ -355,7 +355,7 @@ export class MongooseProvider implements Provider {
                   lead.lastConversationsByChannel.push(conv);
               }
             }
-            LeadModel.findByIdAndUpdate((lead as any).id, lead).then((error) => {
+            LeadModel.findByIdAndUpdate(lead.id, lead).then((error) => {
                 resolve(true)
             }).catch((error) => {
                 console.log('Failed to update lead');
