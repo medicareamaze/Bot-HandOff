@@ -317,11 +317,15 @@ export class MongooseProvider implements Provider {
         };
         var id = customerAddress.conversation.id;
         return new Promise<Conversation>((resolve, reject)=>{
-            ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then((conv)=> {
+            ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then( async (conv)  =>  {
                 console.log('promise handled')
-                return conv;               
-            }).catch((error)=>{
-                resolve(null);
+                var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
+                return conversation;
+                               
+            }).catch(async (error)=>{
+                console.log('promise not handledhandled')
+                var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
+                return conversation;
             });        
         });
          //  return await ConversationModel.create({
