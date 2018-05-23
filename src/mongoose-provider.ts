@@ -281,15 +281,11 @@ export class MongooseProvider implements Provider {
         } else if (by.customerConversationId) {
             let conversation: Conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
             if (!conversation && customerAddress) {
-                //Wait for 2 seconds to allow possible prior to execute and check again if Conversation exists before creating a newone
-                var that = this;
-                setTimeout(async function() {
                     conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
                     if (!conversation && customerAddress) {
-                        conversation = await that.createConversation(customerAddress);
+                        conversation = await this.createConversation(customerAddress);
                     }
-                    return conversation;
-                }, 2000);
+                    
             }
             else {
             return conversation;
