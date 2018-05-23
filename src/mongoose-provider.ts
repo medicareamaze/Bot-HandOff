@@ -281,9 +281,13 @@ export class MongooseProvider implements Provider {
         } else if (by.customerConversationId) {
             let conversation: Conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
             if (!conversation && customerAddress) {
-              
-                conversation = await this.createConversation(customerAddress);
-                
+                //Wait for 2 seconds to allow possible prior to execute and check again if Conversation exists before creating a newone
+                setTimeout(async function() {
+                    conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
+                    if (!conversation && customerAddress) {
+                        conversation = await this.createConversation(customerAddress);
+                    }
+                }, 2000);
             }
             return conversation;
         } else if (by.bestChoice){
@@ -307,19 +311,19 @@ export class MongooseProvider implements Provider {
     }
 
     private async createConversation(customerAddress: builder.IAddress): Promise<Conversation> {
-        var obj = {
-            customer: customerAddress,
-            state: ConversationState.Bot,
-            transcript: []
-        };
-        var id = customerAddress.conversation.id;
-
-        return await ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true });
-        // return await ConversationModel.create({
+        // var obj = {
         //     customer: customerAddress,
         //     state: ConversationState.Bot,
         //     transcript: []
-        // });
+        // };
+        // var id = customerAddress.conversation.id;
+
+        // return await ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true });
+         return await ConversationModel.create({
+            customer: customerAddress,
+            state: ConversationState.Bot,
+            transcript: []
+        });
     }
 
     private async updateConversation(conversation: Conversation): Promise<boolean> {
