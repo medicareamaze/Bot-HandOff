@@ -59,6 +59,7 @@ export const ConversationSchema = new mongoose.Schema({
     },
     transcript: [TranscriptLineSchema]
 });
+
 export interface ConversationDocument extends Conversation, mongoose.Document { }
 export const ConversationModel = mongoose.model<ConversationDocument>('Conversation', ConversationSchema)
 
