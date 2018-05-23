@@ -288,9 +288,12 @@ export class MongooseProvider implements Provider {
                     if (!conversation && customerAddress) {
                         conversation = await that.createConversation(customerAddress);
                     }
+                    return conversation;
                 }, 2000);
             }
+            else {
             return conversation;
+            }
         } else if (by.bestChoice){
             const waitingLongest = (await this.getCurrentConversations())
                 .filter(conversation => conversation.state === ConversationState.Waiting)
