@@ -307,19 +307,19 @@ export class MongooseProvider implements Provider {
     }
 
     private async createConversation(customerAddress: builder.IAddress): Promise<Conversation> {
-        // var obj = {
-        //     customer: customerAddress,
-        //     state: ConversationState.Bot,
-        //     transcript: []
-        // };
-        // var id = customerAddress.conversation.id;
-
-        // return await ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true });
-         return await ConversationModel.create({
+        var obj = {
             customer: customerAddress,
             state: ConversationState.Bot,
             transcript: []
-        });
+        };
+        var id = customerAddress.conversation.id;
+
+        return await ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true });
+        //  return await ConversationModel.create({
+        //     customer: customerAddress,
+        //     state: ConversationState.Bot,
+        //     transcript: []
+        // });
     }
 
     private async updateConversation(conversation: Conversation): Promise<boolean> {
