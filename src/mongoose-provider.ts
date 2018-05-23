@@ -280,14 +280,9 @@ export class MongooseProvider implements Provider {
         } else if (by.customerConversationId) {
             let conversation: Conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
             if (!conversation && customerAddress) {
-                try
-                {
+              
                 conversation = await this.createConversation(customerAddress);
-                }
-                catch (e)
-                {
-                    console.log('Caught Error - Race Conditon during upsert');
-                }
+                
             }
             return conversation;
         } else if (by.bestChoice){
