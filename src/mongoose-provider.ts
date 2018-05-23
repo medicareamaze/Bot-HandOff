@@ -316,9 +316,15 @@ export class MongooseProvider implements Provider {
             transcript: []
         };
         var id = customerAddress.conversation.id;
-
-        return await ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then(r=>console.log('promise handled'),e=>console.log(e));;
-        //  return await ConversationModel.create({
+        return new Promise<Conversation>((resolve, reject)=>{
+            ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then((conv)=> {
+                console.log('promise handled')
+                return conv;               
+            }).catch((error)=>{
+                resolve(null);
+            });        
+        });
+         //  return await ConversationModel.create({
         //     customer: customerAddress,
         //     state: ConversationState.Bot,
         //     transcript: []
