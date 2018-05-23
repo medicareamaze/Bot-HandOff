@@ -282,9 +282,12 @@ export class MongooseProvider implements Provider {
             let conversation: Conversation = await ConversationModel.findOne({ 'customer.conversation.id': by.customerConversationId });
             if (!conversation && customerAddress) {
              conversation = await this.createConversation(customerAddress);                   
-                    
+             return conversation;    
             }
+            else
+            {
             return conversation;
+            }
             
         } else if (by.bestChoice){
             const waitingLongest = (await this.getCurrentConversations())
