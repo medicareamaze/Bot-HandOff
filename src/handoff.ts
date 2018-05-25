@@ -39,7 +39,7 @@ export interface By {
 }
 // What is stored in a Lead. Agent only included if customer is talking to an agent
 export interface Lead {
-    id: string,
+    leadId: string,
     name: string,
     email:string,
     mobileNumber:string,

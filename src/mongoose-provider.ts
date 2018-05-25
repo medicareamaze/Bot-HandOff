@@ -75,7 +75,7 @@ export const ByModel = mongoose.model<ByDocument>('By', BySchema);
 
 
 export const LeadSchema = new mongoose.Schema({
-    id: String,
+    leadId: String,
     name: String,
     email:String,
     mobileNumber:String,
@@ -357,7 +357,7 @@ export class MongooseProvider implements Provider {
 
     private async createLead(id:string, name:string): Promise<Lead> {
         return await LeadModel.create({
-            id: id,
+            leadId: id,
             name: name           
         });
     }
