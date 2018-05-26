@@ -154,11 +154,7 @@ export class MongooseProvider implements Provider {
         return await this.updateConversation(conversation);
     }
     async updateLeadConversation(by: By, message: builder.IMessage, from: string): Promise<boolean> {
-        let sentimentScore = -1;
-        let text = message.text;        
-        let adaptiveResponseKVPairs = !!message.value? JSON.stringify(message.value):null;
-        let attachments = JSON.stringify(message.attachments);
-        let datetime = new Date().toISOString();
+        
         
        //find the latest converation by customer id, channel, bot
         let  conversations = await ConversationModel.find({ 'customer.user.id': by.customerId });
@@ -177,42 +173,7 @@ export class MongooseProvider implements Provider {
         }
 
         await this.updateLead(lead,conversation);
-
-        if (from == "Customer") {
-            if (indexExports._textAnalyticsKey) { sentimentScore = await this.collectSentiment(text); }
-            datetime = message.localTimestamp ? message.localTimestamp : message.timestamp
-        }
-
-        conversation.transcript.push({
-            timestamp: datetime,
-            from: from,
-            sentimentScore: sentimentScore,
-            state: conversation.state,
-            attachments: attachments,
-            adaptiveResponseKVPairs:adaptiveResponseKVPairs,
-            text
-        });
-
-        if (indexExports._appInsights) {   
-            // You can't log embedded json objects in application insights, so we are flattening the object to one item.
-            // Also, have to stringify the object so functions from mongodb don't get logged 
-            let latestTranscriptItem = conversation.transcript.length-1;
-            let x = JSON.parse(JSON.stringify(conversation.transcript[latestTranscriptItem]));
-            x['botId'] = conversation.customer.bot.id;
-            x['customerId'] = conversation.customer.user.id;
-            x['customerName'] = conversation.customer.user.name;
-            x['customerChannelId'] = conversation.customer.channelId;
-            x['customerConversationId'] = conversation.customer.conversation.id;
-            if (conversation.agent) {
-                x['agentId'] = conversation.agent.user.id;
-                x['agentName'] = conversation.agent.user.name;
-                x['agentChannelId'] = conversation.agent.channelId;
-                x['agentConversationId'] = conversation.agent.conversation.id;
-            }
-            indexExports._appInsights.client.trackEvent("Transcript", x);    
-        }
-
-        return await this.updateConversation(conversation);
+       
     }
 
 
