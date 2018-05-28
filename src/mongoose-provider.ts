@@ -166,7 +166,7 @@ export class MongooseProvider implements Provider {
                
         if (!conversation) return false;
         //Check if Lead exists - if not create
-        let  lead = await LeadModel.find({'leadId': by.customerId });
+        let  lead = await LeadModel.findOne({'leadId': by.customerId });
         if(!lead){
         //create lead and add converation 
         lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
@@ -340,7 +340,7 @@ export class MongooseProvider implements Provider {
                   lead.lastConversationsByChannel.push(conv);
               }
             }
-            LeadModel.findByIdAndUpdate((lead as any)._id, lead).then((error) => {
+            LeadModel.findByIdAndUpdate((lead as any)._id, {lastConversationsByChannel:lead.lastConversationsByChannel}).then((error) => {
                 resolve(true)
             }).catch((error) => {
                 console.log('Failed to update lead');
