@@ -166,7 +166,7 @@ export class MongooseProvider implements Provider {
                
         if (!conversation) return false;
         //Check if Lead exists - if not create
-        let  lead = await LeadModel.findOne({ 'leadId': by.customerId });
+        let  lead = await LeadModel.find({'leadId': by.customerId });
         if(!lead){
         //create lead and add converation 
         lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
