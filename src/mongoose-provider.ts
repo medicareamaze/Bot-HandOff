@@ -271,29 +271,29 @@ export class MongooseProvider implements Provider {
     }
 
     private async createConversation(customerAddress: builder.IAddress): Promise<Conversation> {
-        var obj = {
-            customer: customerAddress,
-            state: ConversationState.Bot,
-            transcript: []
-        };
-        var id = customerAddress.conversation.id;
-        return new Promise<Conversation>((resolve, reject)=>{
-            ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then( async (conv)  =>  {
-                console.log('promise handled')
-                var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
-                return conversation;
-                               
-            }).catch(async (error)=>{
-                console.log('promise not handledhandled')
-                var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
-                return conversation;
-            });        
-        });
-         //  return await ConversationModel.create({
+        // var obj = {
         //     customer: customerAddress,
         //     state: ConversationState.Bot,
         //     transcript: []
+        // };
+        // var id = customerAddress.conversation.id;
+        // return new Promise<Conversation>((resolve, reject)=>{
+        //     ConversationModel.update({'customer.conversation.id':id}, obj, { upsert: true }).then( async (conv)  =>  {
+        //         console.log('promise handled')
+        //         var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
+        //         return conversation;
+                               
+        //     }).catch(async (error)=>{
+        //         console.log('promise not handled handled')
+        //         var conversation = await ConversationModel.findOne({ 'customer.conversation.id': id });
+        //         return conversation;
+        //     });        
         // });
+          return await ConversationModel.create({
+            customer: customerAddress,
+            state: ConversationState.Bot,
+            transcript: []
+        });
     }
 
     private async updateConversation(conversation: Conversation): Promise<boolean> {
