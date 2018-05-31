@@ -352,6 +352,7 @@ export class MongooseProvider implements Provider {
                 for (var prop in session.message.value) {
                     update[prop] = session.message.value[prop];                    
                 }
+            }
 
             LeadModel.findByIdAndUpdate((lead as any)._id, update).then((error) => {
                 resolve(true)
