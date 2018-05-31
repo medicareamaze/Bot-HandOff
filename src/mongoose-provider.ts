@@ -328,7 +328,7 @@ export class MongooseProvider implements Provider {
         return new Promise<boolean>((resolve, reject) => {
             
             // Update Conversations
-            let update:any;
+            let update:any={};
             if (!lead.lastConversationsByChannel || lead.lastConversationsByChannel.length<=0){
                 lead.lastConversationsByChannel= [conv];
             }else{
