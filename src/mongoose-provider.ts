@@ -350,7 +350,8 @@ export class MongooseProvider implements Provider {
                 var requiredFields = "";
                 var flagRequiredFieldsPopulated = true;
                 for (var prop in session.message.value) {
-                    update[prop] = session.message.value[prop];                    
+                    if(session.message.value[prop])
+                      update[prop] = session.message.value[prop];                    
                 }
             }
 
