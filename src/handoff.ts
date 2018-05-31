@@ -46,6 +46,7 @@ export interface Lead {
     landLine:string,
     zip:string,
     dateOfBirth:Date,
+    leadIntent: string[],
     eligibleProductTypes: string[],
     interestedProductTypes: string[],
     offeredProducts:string[],
@@ -138,7 +139,7 @@ export class Handoff {
         // method will either return existing conversation or a newly created conversation if this is first time we've heard from customer
         const conversation = await this.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
         await this.addToTranscript({ customerConversationId: conversation.customer.conversation.id }, message);
-        await this.updateLead({ customerId: message.address.user.id}, message);
+        await this.updateLead({ customerId: message.address.user.id}, session);
         switch (conversation.state) {
             case ConversationState.Bot:
                 return next();
@@ -221,9 +222,9 @@ export class Handoff {
         return await this.provider.getCurrentConversations();
     }
 
-    public updateLead = async (by: By, message: builder.IMessage): Promise<boolean> => {   
+    public updateLead = async (by: By, session: builder.Session): Promise<boolean> => {   
         let from = by.agentConversationId ? 'Agent' : 'Customer'; 
-        return  this.provider.updateLeadConversation(by,message,from) ;   
+        return  this.provider.updateLeadConversation(by,session,from) ;   
         
     }
 };

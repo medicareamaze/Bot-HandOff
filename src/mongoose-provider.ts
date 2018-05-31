@@ -82,6 +82,7 @@ export const LeadSchema = new mongoose.Schema({
     landLine:String,
     zip:String,
     dateOfBirth:Date,
+    leadIntent: [String],
     eligibleProductTypes: [String],
     interestedProductTypes: [String],
     offeredProducts:[String],
@@ -153,12 +154,12 @@ export class MongooseProvider implements Provider {
 
         return await this.updateConversation(conversation);
     }
-    async updateLeadConversation(by: By, message: builder.IMessage, from: string): Promise<boolean> {
+    async updateLeadConversation(by: By, session: builder.Session, from: string): Promise<boolean> {
         
         
        //find the latest converation by customer id, channel, bot
         let  conversations = await ConversationModel.find({ 'customer.user.id': by.customerId });
-        conversations=    conversations.filter(conversation => conversation.customer.channelId === message.address.channelId && conversation.customer.bot.name === message.address.bot.name && conversation.transcript.length>0 );               
+        conversations=    conversations.filter(conversation => conversation.customer.channelId === session.message.address.channelId && conversation.customer.bot.name === session.message.address.bot.name && conversation.transcript.length>0 );               
         conversations= conversations.sort((x, y) => y.transcript[y.transcript.length - 1].timestamp - x.transcript[x.transcript.length - 1].timestamp);
         
         let conversation = conversations.length>0 && conversations[conversations.length-1] ;
@@ -172,7 +173,7 @@ export class MongooseProvider implements Provider {
         lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
         }
 
-        await this.updateLead(lead,conversation);
+        await this.updateLead(lead,conversation,session);
        
     }
 
@@ -323,8 +324,11 @@ export class MongooseProvider implements Provider {
         });
     }
 
-    private async updateLead(lead: Lead,conv:Conversation): Promise<boolean> {
+    private async updateLead(lead: Lead,conv:Conversation,session:builder.Session): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
+            
+            // Update Conversations
+            let update:any;
             if (!lead.lastConversationsByChannel || lead.lastConversationsByChannel.length<=0){
                 lead.lastConversationsByChannel= [conv];
             }else{
@@ -340,7 +344,10 @@ export class MongooseProvider implements Provider {
                   lead.lastConversationsByChannel.push(conv);
               }
             }
-            LeadModel.findByIdAndUpdate((lead as any)._id, {lastConversationsByChannel:lead.lastConversationsByChannel}).then((error) => {
+            update.lastConversationsByChannel=lead.lastConversationsByChannel;
+
+
+            LeadModel.findByIdAndUpdate((lead as any)._id, update).then((error) => {
                 resolve(true)
             }).catch((error) => {
                 console.log('Failed to update lead');
