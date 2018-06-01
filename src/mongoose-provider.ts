@@ -359,11 +359,13 @@ export class MongooseProvider implements Provider {
             }
 
             LeadModel.findByIdAndUpdate((lead as any)._id, update).then((error) => {
-                if (!session.dialogData.data )
-                session.dialogData['data'] = {};
-                for (var prop in lead) {
-                    if (!session.dialogData.data[prop])
-                        session.dialogData.data[prop] = '';//initializing Session Dialog data for Graph Dialog to load  
+                if(session.dialogData) {
+                    if (!session.dialogData.data )
+                    session.dialogData['data'] = {};
+                    for (var prop in lead) {
+                        if (!session.dialogData.data[prop])
+                            session.dialogData.data[prop] = '';//initializing Session Dialog data for Graph Dialog to load  
+                    }
                 }
                 resolve(true)
             }).catch((error) => {
