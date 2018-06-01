@@ -81,7 +81,7 @@ export const LeadSchema = new mongoose.Schema({
     mobileNumber:String,
     landLine:String,
     zip:String,
-    dateOfBirth:Date,
+    dateOfBirth:String,
     leadIntent: [String],
     eligibleProductTypes: [String],
     interestedProductTypes: [String],
