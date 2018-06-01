@@ -76,21 +76,21 @@ export const ByModel = mongoose.model<ByDocument>('By', BySchema);
 
 export const LeadSchema = new mongoose.Schema({
     leadId: String,
-    name: {type:String,default:''},
-    email:{type:String,default:''},
-    mobileNumber:{type:String,default:''},
-    landLine:{type:String,default:''},
-    zip:{type:String,default:''},
-    dateOfBirth:{type:Date,default:new Date('1/1/1950')},
-    leadIntent: {type:[String],default:[]},
-    eligibleProductTypes: {type:[String],default:[]},
-    interestedProductTypes: {type:[String],default:[]},
-    offeredProducts:{type:[String],default:[]},
-    interestedProducts:{type:[String],default:[]},
-    webPushSubscription:{type:[String],default:[]},
-    androidPushSubscription:{type:[String],default:[]},
-    iosPushSubscription:{type:[String],default:[]},
-    isAgent:{type:Boolean,default:false},    
+    name: String,
+    email:String,
+    mobileNumber:String,
+    landLine:String,
+    zip:String,
+    dateOfBirth:Date,
+    leadIntent: [String],
+    eligibleProductTypes: [String],
+    interestedProductTypes: [String],
+    offeredProducts:[String],
+    interestedProducts:[String],
+    webPushSubscription:[String],
+    androidPushSubscription:[String],
+    iosPushSubscription:[String],
+    isAgent:Boolean,    
     lastConversationsByChannel: [ConversationSchema]
 });
 
@@ -320,22 +320,7 @@ export class MongooseProvider implements Provider {
     private async createLead(id:string, name:string): Promise<Lead> {
         return await LeadModel.create({
             leadId: id,
-            name: name ,            
-            email:'',
-            mobileNumber:'',
-            landLine:'',
-            zip:'',
-            dateOfBirth:'1/1/1950',
-            leadIntent: [],
-            eligibleProductTypes: [],
-            interestedProductTypes: [],
-            offeredProducts:[],
-            interestedProducts:[],
-            webPushSubscription:[],
-            androidPushSubscription:[],
-            iosPushSubscription:[],
-            isAgent:false,    
-            lastConversationsByChannel: null
+            name: name 
                      
         });
 
