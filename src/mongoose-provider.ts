@@ -358,19 +358,17 @@ export class MongooseProvider implements Provider {
                 }
             }
             LeadModel.findByIdAndUpdate((lead as any)._id, update,{new: true}, function(error,doc){
-                if (session.userData) {
-                    for (var prop in doc) {
-                        if (!session.userData[prop])
-                            session.dialogData.data[prop] = lead[prop];//initializing Session Dialog data for Graph Dialog to load  
+                if(error) resolve(false);
+                else 
+                {
+                    if (session.userData) {
+                        for (var prop in doc) {
+                            if (!session.userData[prop])
+                                session.userData.data[prop] = doc[prop];//initializing Session Dialog data for Graph Dialog to load  
+                        }
                     }
+                    resolve(true);
                 }
-
-            }).then((error,doc) => {
-                 resolve(true)
-            }).catch((error) => {
-                console.log('Failed to update lead');
-                console.log(lead as any);
-                resolve(false);
             });
 
             // LeadModel.findByIdAndUpdate((lead as any)._id, update,{new: true}).then((error,doc) => {
