@@ -362,9 +362,8 @@ export class MongooseProvider implements Provider {
                 else 
                 {
                     if (session.userData) {
-                        for (var prop in doc) {
-                            if (!session.userData[prop])
-                                session.userData.data[prop] = doc[prop];//initializing Session Dialog data for Graph Dialog to load  
+                        for (var prop in doc) {                            
+                                session.userData[prop] = doc[prop];//initializing Session Dialog data for Graph Dialog to load  
                         }
                     }
                     resolve(true);
