@@ -352,7 +352,7 @@ export class MongooseProvider implements Provider {
             // Update Adaptive responses
             if (session.message && session.message.value) {                
                 for (var prop in session.message.value) {
-                    if(session.message.value[prop])
+                    if(session.message.value[prop] && prop in LeadSchema)
                   
                       update[prop] = session.message.value[prop];  
                                  
@@ -360,7 +360,7 @@ export class MongooseProvider implements Provider {
             }
             if (session.dialogData && session.dialogData.data) {                
                 for (var prop in session.dialogData.data) {
-                    if(session.dialogData.data[prop] && LeadSchema[prop])
+                    if(session.dialogData.data[prop] && prop in LeadSchema)
                   
                       update[prop] = session.message.value[prop];  
                                  
@@ -372,7 +372,7 @@ export class MongooseProvider implements Provider {
                 {
                     if (session.userData) {
                         for (var prop in doc ) {  
-                            if(LeadSchema[prop])                          
+                            if(prop in LeadSchema)                          
                                 session.userData[prop] = doc[prop];//initializing Session Dialog data for Graph Dialog to load  
                         }
                     }
