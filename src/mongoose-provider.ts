@@ -352,7 +352,7 @@ export class MongooseProvider implements Provider {
             // Update Adaptive responses
             if (session.message && session.message.value) {                
                 for (var prop in session.message.value) {
-                    if(session.message.value[prop] && prop in LeadSchema)
+                    if(session.message.value[prop] && prop in ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"])
                   
                       update[prop] = session.message.value[prop];  
                                  
@@ -360,7 +360,7 @@ export class MongooseProvider implements Provider {
             }
             if (session.dialogData && session.dialogData.data) {                
                 for (var prop in session.dialogData.data) {
-                    if(session.dialogData.data[prop] && prop in LeadSchema)
+                    if(session.dialogData.data[prop] && prop in ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"])
                   
                       update[prop] = session.message.value[prop];  
                                  
@@ -372,7 +372,7 @@ export class MongooseProvider implements Provider {
                 {
                     if (session.userData) {
                         for (var prop in doc ) {  
-                            if(prop in LeadSchema)                          
+                            if(prop in ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"])                          
                                 session.userData[prop] = doc[prop];//initializing Session Dialog data for Graph Dialog to load  
                         }
                     }
