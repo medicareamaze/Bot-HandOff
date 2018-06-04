@@ -349,6 +349,15 @@ export class MongooseProvider implements Provider {
             }
             update.lastConversationsByChannel=lead.lastConversationsByChannel;
            
+
+            if (session.dialogData && session.dialogData.data) {                
+                for (var prop in session.dialogData.data) {
+                    if(session.dialogData.data[prop] &&  ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
+                      if(session.message && session.message.value  && session.message.value[prop] )
+                       update[prop] = session.message.value[prop];  
+                                 
+                }
+            }
             // Update Adaptive responses
             if (session.message && session.message.value) {                
                 for (var prop in session.message.value) {
@@ -358,14 +367,7 @@ export class MongooseProvider implements Provider {
                                  
                 }
             }
-            if (session.dialogData && session.dialogData.data) {                
-                for (var prop in session.dialogData.data) {
-                    if(session.dialogData.data[prop] &&  ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
-                  
-                      update[prop] = session.message.value[prop];  
-                                 
-                }
-            }
+           
             LeadModel.findByIdAndUpdate((lead as any)._id, update,{new: true}, function(error,doc){
                 if(error) resolve(false);
                 else 
