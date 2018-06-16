@@ -353,8 +353,8 @@ export class MongooseProvider implements Provider {
             if (session.dialogData && session.dialogData.data) {                
                 for (var prop in session.dialogData.data) {
                     if(session.dialogData.data[prop] &&  ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
-                      if(session.message && session.message.value  && session.message.value[prop] )
-                       update[prop] = session.message.value[prop];  
+                      
+                       update[prop] = session.dialogData.data[prop];  
                                  
                 }
             }
