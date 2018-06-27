@@ -79,6 +79,9 @@ export const LeadSchema = new mongoose.Schema({
     name: String,
     email:String,
     mobileNumber:String,
+    mobileToken: String,
+    mobileNumberVerified: Boolean,
+    mobileNumberVerifiedTime: String,
     landLine:String,
     zip:String,
     dateOfBirth:String,
@@ -350,9 +353,10 @@ export class MongooseProvider implements Provider {
             update.lastConversationsByChannel=lead.lastConversationsByChannel;
            
 
-            if (session.dialogData && session.dialogData.data) {                
-                for (var prop in session.dialogData.data) {
-                    if(session.dialogData.data[prop] &&  ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
+            if (session.userData) {                
+                for (var prop in session.userData) {
+                   
+                    if(session.dialogData.data[prop] &&  ["leadId","name", "email","mobileNumber","mobileToken","mobileNumberVerified","mobileNumberVerifiedTime","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
                       
                        update[prop] = session.dialogData.data[prop];  
                                  
@@ -361,7 +365,7 @@ export class MongooseProvider implements Provider {
             // Update Adaptive responses
             if (session.message && session.message.value) {                
                 for (var prop in session.message.value) {
-                    if(session.message.value[prop] && ["leadId","name", "email","mobileNumber","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
+                    if(session.message.value[prop] && ["leadId","name", "email","mobileNumber","mobileToken","mobileNumberVerified","mobileNumberVerifiedTime","landLine","zip","dateOfBirth","leadIntent","eligibleProductTypes","interestedProductTypes","offeredProducts","interestedProducts","androidPushSubscription","iosPushSubscription","isAgent"].indexOf(prop)>0)
                   
                       update[prop] = session.message.value[prop];  
                                  
