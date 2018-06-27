@@ -25,7 +25,13 @@ let setup = (bot, app, isAgent, options) => {
     } else {
         _mongodbProvider = options.mongodbProvider || process.env.MONGODB_PROVIDER;
         mongooseProvider = new MongooseProvider();
+        try{
         mongoose.connect(_mongodbProvider);
+        }
+        catch(e){
+            console.log('Database connection is being reused');
+        }
+    
     }
 
     if (!options.directlineSecret && !process.env.MICROSOFT_DIRECTLINE_SECRET) {
