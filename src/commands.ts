@@ -109,7 +109,7 @@ async function customerCommand(session: builder.Session, next: Function, handoff
         }
         else{
             //if customer is not connected to bot we need to connect the customer to bot - Toggle
-            session.endConversation("Connecting you to the bot!");
+           
             await handoff.connectCustomerToBot({ customerConversationId: conversation.customer.conversation.id })
             // If the customer was talking to the agent and disconnects - and connects to the bot, we need to send a message to the agent
             if(conversation.state == ConversationState.Agent){
@@ -123,7 +123,8 @@ async function customerCommand(session: builder.Session, next: Function, handoff
                 }
 
             }
-            return next();
+            session.endConversation("Connecting you to the bot!");
+            return;
         }
     }
     // Customer typed restart 
