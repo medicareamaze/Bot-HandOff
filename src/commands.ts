@@ -123,7 +123,7 @@ async function customerCommand(session: builder.Session, next: Function, handoff
                 }
 
             }
-            return;
+            return next();
         }
     }
     // Customer typed restart 
