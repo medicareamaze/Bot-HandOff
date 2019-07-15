@@ -147,7 +147,7 @@ export class Handoff {
             case ConversationState.Bot:
                 return next();
             case ConversationState.Waiting:
-                session.send("Connecting you to the next available agent.");
+                session.send("Connecting you to the next available agent.\n Type 'restart' to talk to the bot again");
                 return;
             case ConversationState.Agent:
                 if (!conversation.agent) {

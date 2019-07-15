@@ -106,26 +106,7 @@ async function customerCommand(session: builder.Session, next: Function, handoff
             await handoff.queueCustomerForAgent({ customerConversationId: conversation.customer.conversation.id });
             session.endConversation("Connecting you to the next available agent.");
             return;
-        }
-        else{
-            //if customer is not connected to bot we need to connect the customer to bot - Toggle
-           
-            await handoff.connectCustomerToBot({ customerConversationId: conversation.customer.conversation.id })
-            // If the customer was talking to the agent and disconnects - and connects to the bot, we need to send a message to the agent
-            if(conversation.state == ConversationState.Agent){
-                if (bot) {
-                    //Send message to customer
-                    var reply = new builder.Message()
-                        .address(conversation.agent)
-                        .text("The customer disconnected! You are now connected to the bot");
-                    bot.send(reply);
-                    
-                }
-
-            }
-            session.send("Connecting you to the bot!");
-            return;
-        }
+        }       
     }
     // Customer typed restart 
     const inputWords = message.text.split(' ');
