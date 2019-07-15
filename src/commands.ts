@@ -155,7 +155,7 @@ async function customerCommand(session: builder.Session, next: Function, handoff
             return next();
           
     }  
-    return next();
+   // return next();
 }
 
 function sendAgentCommandOptions(session: builder.Session) {
