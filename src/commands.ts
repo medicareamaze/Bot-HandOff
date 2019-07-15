@@ -19,7 +19,7 @@ function command(session: builder.Session, next: Function, handoff: Handoff, bot
     if (handoff.isAgent(session)) {
         agentCommand(session, next, handoff, bot);
     } else {
-        customerCommand(session, next, handoff);
+        customerCommand(session, next, handoff,bot);
     }
 }
 

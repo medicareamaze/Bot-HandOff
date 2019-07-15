@@ -173,7 +173,7 @@ export class MongooseProvider implements Provider {
         let  lead = await LeadModel.findOne({'leadId': by.customerId });
         if(!lead){
         //create lead and add converation 
-        lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
+        let lead = await  this.createLead(conversation.customer.user.id,conversation.customer.user.name)
         }
 
         await this.updateLead(lead,conversation,session);
