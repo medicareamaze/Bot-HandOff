@@ -94,19 +94,67 @@ async function agentCommand(
     }
 }
 
-async function customerCommand(session: builder.Session, next: Function, handoff: Handoff) {
+async function customerCommand(session: builder.Session, next: Function, handoff: Handoff,bot: builder.UniversalBot) {
     const message = session.message;
+    const conversation = await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
+        
     const customerStartHandoffCommandRegex = new RegExp("^" + indexExports._customerStartHandoffCommand + "$", "gi");
     if (customerStartHandoffCommandRegex.test(message.text)) {
         // lookup the conversation (create it if one doesn't already exist)
-        const conversation = await handoff.getConversation({ customerConversationId: message.address.conversation.id }, message.address);
         if (conversation.state == ConversationState.Bot) {
             await handoff.addToTranscript({ customerConversationId: conversation.customer.conversation.id }, message);
             await handoff.queueCustomerForAgent({ customerConversationId: conversation.customer.conversation.id });
             session.endConversation("Connecting you to the next available agent.");
             return;
         }
+        else{
+            //if customer is not connected to bot we need to connect the customer to bot - Toggle
+            session.endConversation("Connecting you to the bot!");
+            await handoff.connectCustomerToBot({ customerConversationId: conversation.customer.conversation.id })
+            // If the customer was talking to the agent and disconnects - and connects to the bot, we need to send a message to the agent
+            if(conversation.state == ConversationState.Agent){
+                if (bot) {
+                    //Send message to customer
+                    var reply = new builder.Message()
+                        .address(conversation.agent)
+                        .text("The customer disconnected! You are now connected to the bot");
+                    bot.send(reply);
+                    
+                }
+
+            }
+            return;
+        }
     }
+    // Customer typed restart 
+    const inputWords = message.text.split(' ');
+    if (inputWords.length == 0)
+        return;
+    switch (inputWords[0]) {
+        case 'restart':
+        //If not in Bot Mode - Coonect to bot first 
+            if (conversation.state !== ConversationState.Bot) {
+                await handoff.connectCustomerToBot({ customerConversationId: conversation.customer.conversation.id });
+                // If the customer was talking to the agent and disconnects - and connects to the bot, we need to send a message to the agent
+                if(conversation.state == ConversationState.Agent){
+                    if (bot) {
+                        //Send message to customer
+                        var reply = new builder.Message()
+                            .address(conversation.agent)
+                            .text("The customer disconnected! You are now connected to the bot");
+                        bot.send(reply);
+                        
+                    }
+
+                }
+            }
+            session.endConversation("Ok. Let's Start Over.\n How can I Help? You can type phrases like \n - I want to enroll in medicare, or\n - I want to learn about medicare, or\n - I want to to find an agent ");               
+       
+            return;
+        default:
+            return next();
+          
+    }  
     return next();
 }
 
