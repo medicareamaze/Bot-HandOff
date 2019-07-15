@@ -123,7 +123,7 @@ async function customerCommand(session: builder.Session, next: Function, handoff
                 }
 
             }
-            session.endConversation("Connecting you to the bot!");
+            session.send("Connecting you to the bot!");
             return;
         }
     }
