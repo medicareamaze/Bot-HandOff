@@ -5,7 +5,8 @@ import * as _ from 'lodash';
 import mongoose = require('mongoose');
 mongoose.Promise = bluebird;
 
-import { By, Conversation, Provider, ConversationState,Lead } from './handoff';
+import { By, Conversation, Provider, ConversationState,LeadIntent,Lead } from './handoff';
+import { Double } from 'bson';
 
 const indexExports = require('./index');
 
@@ -74,6 +75,15 @@ export interface ByDocument extends By, mongoose.Document { }
 export const ByModel = mongoose.model<ByDocument>('By', BySchema);
 
 
+export const LeadIntentSchema = new mongoose.Schema({
+    models: String,
+    entities:[String],
+    score: Double,
+    intent: String
+});
+//export interface LeadIntentDocument extends  LeadIntent, mongoose.Document {}
+
+
 export const LeadSchema = new mongoose.Schema({
     leadId: String,
     name: String,
@@ -85,7 +95,7 @@ export const LeadSchema = new mongoose.Schema({
     landLine:String,
     zip:String,
     dateOfBirth:String,
-   // leadIntent: [String],
+    leadIntent: [LeadIntentSchema],
     eligibleProductTypes: [String],
     interestedProductTypes: [String],
     offeredProducts:[String],
