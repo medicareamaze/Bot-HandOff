@@ -76,7 +76,7 @@ export const ByModel = mongoose.model<ByDocument>('By', BySchema);
 
 
 export const LeadIntentSchema = new mongoose.Schema({
-    models: String,
+    model: String,
     entities:[String],
     score: Double,
     intent: String
