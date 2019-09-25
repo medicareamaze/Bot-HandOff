@@ -1,7 +1,7 @@
 import * as builder from 'botbuilder';
 import { Express } from 'express';
 import { MongooseProvider } from './mongoose-provider';
-import { Double } from 'bson';
+
 
 // Options for state of a conversation
 // Customer talking to bot, waiting for next available agent or talking to an agent
@@ -42,7 +42,7 @@ export interface By {
 export interface LeadIntent{
     models: string,
     entities:[string],
-    score: Double,
+    score: Number,
     intent: string
 }
 // What is stored in a Lead. Agent only included if customer is talking to an agent
